@@ -4,6 +4,10 @@ export interface OsmTags {
   "addr:housenumber"?: string;
   "addr:city"?: string;
   phone?: string;
+  opening_hours?: string;
+  shop?: string;
+  "contact:facebook"?: string;
+  email?: string;
   website?: string;
 }
 

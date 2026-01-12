@@ -1,23 +1,75 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ImageBackground,
+} from "react-native";
 import { Link } from "expo-router";
+import React from "react";
 
-const Home = () => {
+export default function Home() {
   return (
-    <View style={styles.containter}>
-      <Link href="/supportedCities">wspierane miasta</Link>
-      <Text>hello sigmas</Text>
-      <Link href="/map">mapa</Link>
-    </View>
+    <ImageBackground
+      source={require("../assets/Luncia.jpg")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Pet Services</Text>
+        <Text style={styles.subtitle}>
+          Znajdź sklepy i usługi dla zwierząt w swojej okolicy
+        </Text>
+
+        <Link href="/supportedCities" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Obsługiwane miasta</Text>
+          </Pressable>
+        </Link>
+
+        <Link href="/map" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Mapa</Text>
+          </Pressable>
+        </Link>
+      </View>
+    </ImageBackground>
   );
-};
-
-export default Home;
-
+}
 const styles = StyleSheet.create({
-  containter: {
+  background: {
     flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    padding: 24,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.4)", // przyciemnia tło
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#fff",
+  },
+  subtitle: {
+    textAlign: "center",
+    color: "#eee",
+    marginBottom: 32,
+  },
+  button: {
+    opacity: 0.9,
+    width: "100%",
+    paddingVertical: 16,
+    borderRadius: 10,
+    backgroundColor: "#222",
+    marginBottom: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });

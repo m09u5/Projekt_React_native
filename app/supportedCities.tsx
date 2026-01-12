@@ -14,7 +14,7 @@ export default function CitySelect() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Wybierz miasto</Text>
+      <Text style={styles.title}>Dostępne miasta</Text>
 
       {Object.entries(CITIES).map(([key, city]) => (
         <Pressable
@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
+    paddingTop: 28,
     fontSize: 22,
     fontWeight: "600",
     marginBottom: 16,
