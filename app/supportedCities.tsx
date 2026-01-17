@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { CITIES, CityKey } from "../src/data/cities";
 
@@ -13,7 +13,10 @@ export default function CitySelect() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 24 }}
+    >
       <Text style={styles.title}>Dostępne miasta</Text>
 
       {Object.entries(CITIES).map(([key, city]) => (
@@ -25,7 +28,7 @@ export default function CitySelect() {
           <Text style={styles.text}>{city.label}</Text>
         </Pressable>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
