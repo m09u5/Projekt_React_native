@@ -24,6 +24,7 @@ export async function fetchPetStores(
     },
     body: query,
   });
+  
 
   const text = await response.text();
 
@@ -31,6 +32,7 @@ export async function fetchPetStores(
     console.error("Overpass error:", text);
     throw new Error("Overpass API error");
   }
+  
 
   const data: OverpassResponse = JSON.parse(text);
   return data.elements;
