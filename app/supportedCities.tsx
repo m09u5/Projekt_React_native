@@ -1,31 +1,69 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
-import { CITIES, CityKey } from "../src/data/cities";
+import { useEffect, useState } from "react";
+import { fetchOffers } from "../src/api/offers.api";
+import { Offer } from "../src/models/offer";
 
 export default function CitySelect() {
   const router = useRouter();
 
-  const handleSelect = (city: CityKey) => {
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchOffers();
+        setOffers(data);
+      } catch (e) {
+        console.log("Błąd pobierania ofert", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const handleSelect = (offerId: string) => {
     router.push({
-      pathname: "/list",
-      params: { city },
+      pathname: "/offer",
+      params: { id: offerId },
     });
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{ paddingBottom: 24 }}
     >
-      <Text style={styles.title}>Dostępne miasta</Text>
+      <Text style={styles.title}>Dostępne oferty</Text>
 
-      {Object.entries(CITIES).map(([key, city]) => (
+      {offers.map((offer) => (
         <Pressable
-          key={key}
+          key={offer.id}
           style={styles.item}
-          onPress={() => handleSelect(key as CityKey)}
+          onPress={() => handleSelect(offer.id)}
         >
-          <Text style={styles.text}>{city.label}</Text>
+          <Text style={styles.text}>{offer.title}</Text>
+          {offer.location?.city && (
+            <Text style={styles.subText}>{offer.location.city}</Text>
+          )}
         </Pressable>
       ))}
     </ScrollView>
@@ -51,5 +89,16 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    fontWeight: "500",
+  },
+  subText: {
+    marginTop: 4,
+    fontSize: 13,
+    color: "#555",
+  },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -23,13 +23,18 @@ export default function Home() {
 
         <Link href="/supportedCities" asChild>
           <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>Obsługiwane miasta</Text>
+            <Text style={styles.buttonText}>Oferty</Text>
           </Pressable>
         </Link>
 
         <Link href="/map" asChild>
           <Pressable style={styles.button}>
             <Text style={styles.buttonText}>Mapa</Text>
+          </Pressable>
+        </Link>
+        <Link href="/admin" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Zaloguj się</Text>
           </Pressable>
         </Link>
       </View>

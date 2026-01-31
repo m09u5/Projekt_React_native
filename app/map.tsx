@@ -8,17 +8,19 @@ import {
   Modal,
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
+import { fetchOffers } from "../src/api/offers.api";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { DetailRow } from "../src/components/detailRow";
-
 import { fetchPetStoresNearby } from "../src/api/osm.api";
 import { OsmElement } from "../src/api/osm.types";
 import { distanceKm } from "../src/utils/distanceCalculator";
 import Slider from "@react-native-community/slider";
+import { Offer } from "../src/models/offer";
 
 export default function MapScreen() {
   const router = useRouter();
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [offers, setOffers] = useState<Offer[]>([]);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
@@ -41,38 +43,40 @@ export default function MapScreen() {
       const loc = await Location.getCurrentPositionAsync({});
       setLocation(loc);
 
-      const { latitude, longitude } = loc.coords;
-
-      const data = await fetchPetStoresNearby(
-        latitude,
-        longitude,
-        radiusKm * 1000
-      );
-
-      setStores(data);
-
-      setLoading(false);
+      try {
+        const data = await fetchOffers();
+        setOffers(data);
+      } catch (e) {
+        console.log("Błąd pobierania ofert", e);
+      } finally {
+        setLoading(false);
+      }
     })();
-  }, [radiusKm]);
+  }, []);
 
   if (loading || !location) {
     return <ActivityIndicator style={{ marginTop: 40 }} />;
   }
 
   const { latitude, longitude } = location.coords;
-  const storeLat = selectedStore?.lat ?? selectedStore?.center?.lat;
-  const storeLon = selectedStore?.lon ?? selectedStore?.center?.lon;
+  const userLat = location?.coords.latitude;
+  const userLon = location?.coords.longitude;
 
-  const distance =
-    selectedStore && storeLat && storeLon
-      ? distanceKm(latitude, longitude, storeLat, storeLon)
+  const offerDistance =
+    selectedOffer && userLat && userLon
+      ? distanceKm(
+          userLat,
+          userLon,
+          selectedOffer.location.lat,
+          selectedOffer.location.lon
+        )
       : null;
 
   const distanceLabel =
-    distance !== null
-      ? distance < 1
-        ? `${Math.round(distance * 1000)} m`
-        : `${distance.toFixed(2)} km`
+    offerDistance !== null
+      ? offerDistance < 1
+        ? `${Math.round(offerDistance * 1000)} m`
+        : `${offerDistance.toFixed(2)} km`
       : null;
 
   return (
@@ -92,30 +96,29 @@ export default function MapScreen() {
           title="Tu jesteś"
         />
 
-        {stores.map((store) => {
-          const lat = store.lat ?? store.center?.lat;
-          const lon = store.lon ?? store.center?.lon;
-
-          if (!lat || !lon) return null;
-
-          return (
-            <Marker
-              key={`${store.type}-${store.id}`}
-              coordinate={{ latitude: lat, longitude: lon }}
-            >
-              <Callout onPress={() => setSelectedStore(store)}>
-                <View style={{ padding: 6 }}>
-                  <Text style={{ fontWeight: "600" }}>
-                    {store.tags?.name ?? "Sklep zoologiczny"}
-                  </Text>
+        {offers.map((offer) => (
+          <Marker
+            key={offer.id}
+            coordinate={{
+              latitude: offer.location.lat,
+              longitude: offer.location.lon,
+            }}
+          >
+            <Callout onPress={() => setSelectedOffer(offer)}>
+              <View style={{ padding: 6, maxWidth: 200 }}>
+                <Text style={{ fontWeight: "600" }}>{offer.title}</Text>
+                {offer.breed && (
                   <Text style={{ fontSize: 12, color: "#555" }}>
-                    Dotknij, aby zobaczyć szczegóły
+                    {offer.breed}
                   </Text>
-                </View>
-              </Callout>
-            </Marker>
-          );
-        })}
+                )}
+                <Text style={{ fontSize: 12, color: "#777" }}>
+                  Dotknij, aby zobaczyć szczegóły
+                </Text>
+              </View>
+            </Callout>
+          </Marker>
+        ))}
       </MapView>
 
       <Pressable style={styles.fab} onPress={() => setMenuVisible(true)}>
@@ -157,34 +160,41 @@ export default function MapScreen() {
       <Modal
         transparent
         animationType="slide"
-        visible={!!selectedStore}
-        onRequestClose={() => setSelectedStore(null)}
+        visible={!!selectedOffer}
+        onRequestClose={() => setSelectedOffer(null)}
       >
         <View style={styles.detailsOverlay}>
           <View style={styles.detailsCard}>
-            <Text style={styles.detailsTitle}>{selectedStore?.tags?.name}</Text>
-
+            <Text style={styles.detailsTitle}>{selectedOffer?.title}</Text>
             {distanceLabel && (
               <Text style={{ color: "#555", marginBottom: 8 }}>
                 {distanceLabel} od Ciebie
               </Text>
             )}
 
-            <DetailRow
-              label="Strona sklepu"
-              value={selectedStore?.tags?.website}
-            />
+            {selectedOffer?.breed && (
+              <Text style={{ marginBottom: 6 }}>
+                Rasa: {selectedOffer.breed}
+              </Text>
+            )}
 
-            <DetailRow label="Telefon" value={selectedStore?.tags?.phone} />
+            <Text style={{ marginBottom: 8 }}>
+              {selectedOffer?.description}
+            </Text>
 
-            <DetailRow
-              label="Godziny otwarcia"
-              value={selectedStore?.tags?.opening_hours}
-            />
+            <Text style={{ color: "#555", marginBottom: 8 }}>
+              Lokalizacja: {selectedOffer?.location.city}
+            </Text>
+
+            <Text style={{ marginBottom: 8 }}>
+              Hodowca: {selectedOffer?.breeder.name}
+              {selectedOffer?.breeder.verified && " ✔"}
+            </Text>
+            <Text style={{ marginBottom: 8 }}>Zadzwoń: +48 123 456 789</Text>
 
             <Pressable
               style={styles.closeButton}
-              onPress={() => setSelectedStore(null)}
+              onPress={() => setSelectedOffer(null)}
             >
               <Text style={styles.closeText}>Zamknij</Text>
             </Pressable>
