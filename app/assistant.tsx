@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { fetchOffers } from "../src/api/offers.api";
 import { prepareOffersForAI } from "../src/ai/prepareOffersForAI";
@@ -27,6 +27,26 @@ export default function AssistantScreen() {
 
   const listRef = useRef<FlatList>(null);
 
+  useEffect(() => {
+    setMessages([
+      {
+        id: "welcome",
+        role: "ai",
+        text:
+          "Cześć Chętnie pomogę dobrać zwierzę. " +
+          "Powiedz proszę gdzie mieszkasz, ile masz czasu na opiekę " +
+          "i czy masz dzieci.",
+      },
+    ]);
+  }, []);
+
+  const buildConversationContext = (allMessages: ChatMessage[]) =>
+    allMessages
+      .map((m) =>
+        m.role === "user" ? `Użytkownik: ${m.text}` : `Asystent: ${m.text}`
+      )
+      .join("\n");
+
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
 
@@ -36,7 +56,9 @@ export default function AssistantScreen() {
       text: input.trim(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+
+    setMessages(updatedMessages);
     setInput("");
     setLoading(true);
 
@@ -48,18 +70,24 @@ export default function AssistantScreen() {
         .map((o) => `- ${o.breed} – ${o.breeder} (${o.city})`)
         .join("\n");
 
-      const prompt = `
-Użytkownik pisze:
-"${userMessage.text}"
+      const conversation = buildConversationContext(updatedMessages);
 
-Dostępne oferty:
+      const prompt = `
+Jesteś asystentem wyboru zwierzęcia.
+
+Poniżej masz CAŁĄ dotychczasową rozmowę:
+${conversation}
+
+Dostępne oferty w systemie:
 ${offersText}
 
-Odpowiedz jak asystent:
-- poleć 1–2 rasy
-- wskaż hodowcę
-- nie wymyślaj nic spoza listy
-- krótko i naturalnie
+Zasady:
+- NIE pytaj ponownie o informacje, które użytkownik już podał
+- jeśli brakuje informacji, zapytaj tylko o JEDNĄ rzecz
+- jeśli masz wystarczające dane, poleć 1–2 rasy
+- wskaż konkretnego hodowcę z listy
+- nie wymyślaj ras ani hodowców
+- odpowiadaj krótko, naturalnie i po ludzku
 `;
 
       const aiResponse = await askAI(prompt);
@@ -77,7 +105,7 @@ Odpowiedz jak asystent:
         {
           id: "error",
           role: "ai",
-          text: "Coś poszło nie tak. Spróbuj ponownie.",
+          text: "Coś poszło nie tak. Spróbuj jeszcze raz.",
         },
       ]);
     } finally {
@@ -120,7 +148,7 @@ Odpowiedz jak asystent:
       <View style={styles.inputBar}>
         <TextInput
           style={styles.input}
-          placeholder="Napisz wiadomość..."
+          placeholder="Napisz wiadomość…"
           value={input}
           onChangeText={setInput}
           multiline

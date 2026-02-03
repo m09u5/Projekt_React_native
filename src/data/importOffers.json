@@ -1,0 +1,98 @@
+[
+    {
+        "animalType": "dog",
+        "breed": "Beagle",
+        "title": "Szczeniaki Beagle",
+        "description": "Wesołe i bardzo towarzyskie psy, lubiące spacery.",
+        "breeder": {
+        "id": "breeder-beagle",
+        "name": "Psia Pasja",
+        "verified": true
+        },
+        "location": {
+        "city": "Wrocław",
+        "lat": 51.0872,
+        "lon": 17.0219
+        }
+    },
+  {
+    "animalType": "dog",
+    "breed": "Owczarek Niemiecki",
+    "title": "Owczarki Niemieckie – młode psy",
+    "description": "Inteligentne, lojalne psy dla aktywnych osób.",
+    "breeder": {
+      "id": "breeder-wolf",
+      "name": "Wolf House",
+      "verified": true
+    },
+    "location": {
+      "city": "Wrocław",
+      "lat": 51.1486,
+      "lon": 17.0775
+    }
+  },
+  {
+    "animalType": "cat",
+    "breed": "Maine Coon",
+    "title": "Kocięta Maine Coon",
+    "description": "Duże, spokojne i bardzo towarzyskie koty.",
+    "breeder": {
+      "id": "breeder-coon",
+      "name": "Coon World",
+      "verified": true
+    },
+    "location": {
+      "city": "Wrocław",
+      "lat": 51.1295,
+      "lon": 17.0326
+    }
+  },
+  {
+    "animalType": "cat",
+    "breed": "Kot Brytyjski",
+    "title": "Kot Brytyjski krótkowłosy",
+    "description": "Spokojne koty, idealne do mieszkania.",
+    "breeder": {
+      "id": "breeder-british",
+      "name": "British Home",
+      "verified": true
+    },
+    "location": {
+      "city": "Wrocław",
+      "lat": 51.0707,
+      "lon": 17.0066
+    }
+  },
+  {
+    "animalType": "cat",
+    "breed": "Kot Bengalski",
+    "title": "Kocięta Bengalskie",
+    "description": "Aktywne i inteligentne koty dla wymagających.",
+    "breeder": {
+      "id": "breeder-bengal",
+      "name": "Bengal Star",
+      "verified": false
+    },
+    "location": {
+      "city": "Wrocław",
+      "lat": 51.0465,
+      "lon": 17.0012
+    }
+  },
+  {
+    "animalType": "rabbit",
+    "breed": "Królik Mini Lop",
+    "title": "Królik Mini Lop",
+    "description": "Spokojny królik domowy, idealny do mieszkania.",
+    "breeder": {
+      "id": "breeder-rabbit",
+      "name": "Mini Zoo",
+      "verified": false
+    },
+    "location": {
+      "city": "Wrocław",
+      "lat": 51.1021,
+      "lon": 16.9583
+    }
+  }
+]
