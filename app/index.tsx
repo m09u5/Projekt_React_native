@@ -37,6 +37,11 @@ export default function Home() {
             <Text style={styles.buttonText}>Zaloguj się</Text>
           </Pressable>
         </Link>
+        <Link href="/assistant" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>asystent</Text>
+          </Pressable>
+        </Link>
       </View>
     </ImageBackground>
   );
