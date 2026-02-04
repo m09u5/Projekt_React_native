@@ -39,7 +39,7 @@ export default function Home() {
         </Link>
         <Link href="/assistant" asChild>
           <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>asystent</Text>
+            <Text style={styles.buttonText}>Asystent AI</Text>
           </Pressable>
         </Link>
       </View>
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.4)", // przyciemnia tło
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   title: {
     fontSize: 28,

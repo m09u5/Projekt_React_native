@@ -167,6 +167,7 @@ Zasady:
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 40,
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   inputBar: {
-    position: "absolute",
+    position: "relative",
     bottom: 0,
     left: 0,
     right: 0,
